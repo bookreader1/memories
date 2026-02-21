@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Private Chat</title>
+
+    <link rel="stylesheet" href="styles.css">
+
+    <style>
+        body {
+            margin: 0;
+            font-family: sans-serif;
+            background: #f0f2f5;
+        }
+
+        .nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: #222;
+            padding: 10px;
+            text-align: center;
+            z-index: 1000;
+        }
+
+        .nav button {
+            padding: 8px 16px;
+            margin: 0 5px;
+            border: none;
+            background: #0084ff;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #chat-container {
+            margin-top: 60px;
+            padding: 20px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    </style>
+
+    <!-- Security check -->
+    <script>
+if (localStorage.getItem("auth") !== "true") {
+    window.location.href = "login.html";
+}
+
+function loadPage(button) {
+
+    const page = button.dataset.page;
+    const container = document.getElementById("chat-container");
+
+    fetch(page)
+        .then(response => response.text())
+        .then(data => {
+
+            container.classList.add("fade-enter");
+            container.innerHTML = data;
+
+            requestAnimationFrame(() => {
+                container.classList.add("fade-enter-active");
+            });
+
+            setTimeout(() => {
+                container.classList.remove("fade-enter", "fade-enter-active");
+            }, 300);
+
+            if (typeof alignMessages === "function") {
+                alignMessages();
+            }
+
+            document.querySelectorAll(".nav button").forEach(btn => {
+                btn.classList.remove("active");
+            });
+
+            button.classList.add("active");
+
+            if (page.includes("chat_page_1") || page.includes("chat_page_2")) {
+                scrollBottomSmooth();
+            } else {
+                scrollTopSmooth();
+            }
+        });
+}
+
+function logout() {
+    localStorage.removeItem("auth");
+    window.location.href = "login.html";
+}
+
+function scrollTopSmooth() {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function scrollBottomSmooth() {
+    window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+}
+
+/* Reading progress bar */
+window.onscroll = function () {
+    const winScroll = document.documentElement.scrollTop || document.body.scrollTop;
+    const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    const scrolled = (winScroll / height) * 100;
+    document.getElementById("progressBar").style.width = scrolled + "%";
+};
+
+window.onload = function() {
+    const firstBtn = document.querySelector('[data-page="chat_page_3.html"]');
+    loadPage(firstBtn);
+};
+</script>
+<script src="script.js"></script>
+</head>
+<body>
+
+    <div class="nav">
+    <button data-page="chat_page_3.html" onclick="loadPage(this)">Start</button>
+    <button data-page="chat_page_2.html" onclick="loadPage(this)">Next</button>
+    <button data-page="chat_page_1.html" onclick="loadPage(this)">END</button>
+    <button onclick="logout()">Logout</button>
+</div>
+    <div class="progress-bar" id="progressBar"></div>
+
+<div class="scroll-buttons">
+    <button onclick="scrollTopSmooth()">↑</button>
+    <button onclick="scrollBottomSmooth()">↓</button>
+</div>
+    <div id="chat-container"></div>
+
+    
+
+</body>
+
+</html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login</title>
+</head>
+<body style="display:flex;justify-content:center;align-items:center;height:100vh;background:#111;color:white;font-family:sans-serif;">
+
+<div>
+    <h2>Enter Password</h2>
+    <input type="password" id="pass">
+    <button onclick="check()">Enter</button>
+    <p id="error" style="color:red;"></p>
+</div>
+
+<script>
+function check() {
+    const password = "13april"; // change this
+    const input = document.getElementById("pass").value;
+
+    if (input === password) {
+        localStorage.setItem("auth", "true");
+        window.location.href = "chat.html";
+    } else {
+        document.getElementById("error").innerText = "Wrong password!";
+    }
+}
+</script>
+
+</body>
+</html>
